@@ -65,7 +65,7 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
 }
 
-.logo { height: 40px; object-fit: contain; }
+.logo { height: 54px; object-fit: contain; }
 
 .header-bar {
   height: 4px;

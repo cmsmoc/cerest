@@ -12,6 +12,22 @@
 </head>
 <body class="painel-body">
 
+  <!-- TELA DE SENHA -->
+  <div id="senha-gate" class="senha-gate">
+    <div class="senha-card">
+      <img src="https://i.ibb.co/V059zm7p/cerest-texto-preto.png" alt="CEREST" class="senha-logo" />
+      <h2>Painel Interno</h2>
+      <p>Digite a senha para acessar o painel da equipe CEREST.</p>
+      <div class="senha-field">
+        <input type="password" id="senha-input" placeholder="Senha de acesso"
+               onkeydown="if(event.key==='Enter') verificarSenha()" autofocus />
+        <button class="btn-primary" onclick="verificarSenha()">Entrar →</button>
+      </div>
+      <p class="senha-erro hidden" id="senha-erro">❌ Senha incorreta. Tente novamente.</p>
+      <small class="senha-hint">Em caso de dúvida, consulte o responsável técnico do sistema.</small>
+    </div>
+  </div>
+
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
@@ -190,7 +206,12 @@
           <button class="btn-primary" onclick="saveConfig('alertDays', document.getElementById('cfg-alert-days').value)">Salvar</button>
         </div>
         <div class="config-card">
-          <h4>🔧 Setup Inicial</h4>
+          <h4>🔒 Senha do Painel</h4>
+          <p>Senha exigida para acessar este painel. Deixe vazio para desativar.</p>
+          <input type="password" id="cfg-senha-painel" placeholder="Nova senha (ou vazio para remover)" />
+          <button class="btn-primary" onclick="saveConfig('painelSenha', document.getElementById('cfg-senha-painel').value)">Salvar</button>
+          <small id="cfg-senha-status"></small>
+        </div>
           <p>Configura a planilha Google Sheets automaticamente (abas, cabeçalhos, dados iniciais).</p>
           <button class="btn-danger" onclick="runSetup()">⚙️ Executar Setup</button>
           <small>Execute apenas uma vez na configuração inicial.</small>

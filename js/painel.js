@@ -12,10 +12,67 @@ let currentEditId = null;
 
 // ====== INIT ======
 document.addEventListener('DOMContentLoaded', () => {
-  loadUserInfo();
-  loadData();
+  iniciarComVerificacaoDeSenha();
   showSection('dashboard');
 });
+
+// ====== SENHA ======
+async function iniciarComVerificacaoDeSenha() {
+  // Se já autenticado nesta sessão, pula a tela de senha
+  if (sessionStorage.getItem('cerest_auth') === '1') {
+    document.getElementById('senha-gate').style.display = 'none';
+    loadUserInfo();
+    loadData();
+    return;
+  }
+
+  // Consulta a API para saber se há senha definida
+  try {
+    const result = await apiGet({ action: 'getConfig' });
+    if (!result.config?.painelSenhaDefinida) {
+      // Sem senha configurada: acesso direto
+      liberarPainel();
+    }
+    // Com senha configurada: tela de login já está visível
+  } catch (e) {
+    // Se falhar a consulta, exibe a tela de senha por segurança
+    console.warn('Não foi possível verificar config de senha:', e);
+  }
+}
+
+async function verificarSenha() {
+  const input = document.getElementById('senha-input');
+  const senha = input.value;
+  const erroEl = document.getElementById('senha-erro');
+
+  if (!senha) {
+    erroEl.classList.remove('hidden');
+    erroEl.textContent = '⚠️ Digite a senha para continuar.';
+    return;
+  }
+
+  try {
+    const result = await apiGet({ action: 'verificarSenha', senha });
+    if (result.liberado) {
+      liberarPainel();
+    } else {
+      erroEl.classList.remove('hidden');
+      erroEl.textContent = '❌ Senha incorreta. Tente novamente.';
+      input.value = '';
+      input.focus();
+    }
+  } catch (e) {
+    erroEl.classList.remove('hidden');
+    erroEl.textContent = '⚠️ Erro de conexão. Verifique e tente novamente.';
+  }
+}
+
+function liberarPainel() {
+  sessionStorage.setItem('cerest_auth', '1');
+  document.getElementById('senha-gate').style.display = 'none';
+  loadUserInfo();
+  loadData();
+}
 
 // ====== SEÇÕES ======
 function showSection(name) {
@@ -344,6 +401,19 @@ async function saveConfig(key, value) {
     const result = await apiPost({ action: 'saveConfig', key, value });
     if (result.success) {
       showToast(`Configuração "${key}" salva!`, 'success');
+      // Feedback especial para senha
+      if (key === 'painelSenha') {
+        const statusEl = document.getElementById('cfg-senha-status');
+        if (statusEl) {
+          statusEl.textContent = value
+            ? '✅ Senha definida. Será exigida no próximo acesso.'
+            : '✅ Senha removida. Painel sem proteção.';
+          statusEl.style.color = 'var(--green)';
+        }
+        document.getElementById('cfg-senha-painel').value = '';
+        // Invalida a sessão atual para forçar nova autenticação
+        if (value) sessionStorage.removeItem('cerest_auth');
+      }
     }
   } catch (e) {
     showToast('Erro ao salvar configuração.', 'error');
