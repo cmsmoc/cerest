@@ -12,61 +12,147 @@ let currentEditId = null;
 
 // ====== INIT ======
 document.addEventListener('DOMContentLoaded', () => {
-  iniciarComVerificacaoDeSenha();
   showSection('dashboard');
+  iniciarGateDeSenha();
 });
 
-// ====== SENHA ======
-async function iniciarComVerificacaoDeSenha() {
-  // Se já autenticado nesta sessão, pula a tela de senha
+// ============================================================
+// CONTROLE DE ACESSO – GATE DE SENHA
+// ============================================================
+
+function mostrarModo(modo) {
+  // modo: 'loading' | 'login' | 'setup'
+  document.getElementById('senha-modo-loading').style.display = modo === 'loading' ? 'block' : 'none';
+  document.getElementById('senha-modo-login').style.display   = modo === 'login'   ? 'block' : 'none';
+  document.getElementById('senha-modo-setup').style.display   = modo === 'setup'   ? 'block' : 'none';
+  document.getElementById('senha-gate').style.display = 'flex';
+}
+
+async function iniciarGateDeSenha() {
+  // Se já autenticado nesta sessão, abre direto
   if (sessionStorage.getItem('cerest_auth') === '1') {
-    document.getElementById('senha-gate').style.display = 'none';
     loadUserInfo();
     loadData();
-    return;
+    return; // gate continua hidden
   }
 
-  // Consulta a API para saber se há senha definida
+  // Mostra "carregando" enquanto consulta a API
+  mostrarModo('loading');
+
   try {
     const result = await apiGet({ action: 'getConfig' });
-    if (!result.config?.painelSenhaDefinida) {
-      // Sem senha configurada: acesso direto
-      liberarPainel();
+    if (result.config?.painelSenhaDefinida) {
+      // Há senha: mostra tela de login
+      mostrarModo('login');
+      setTimeout(() => document.getElementById('senha-input')?.focus(), 50);
+    } else {
+      // Sem senha: mostra tela de primeiro acesso / configuração
+      mostrarModo('setup');
     }
-    // Com senha configurada: tela de login já está visível
   } catch (e) {
-    // Se falhar a consulta, exibe a tela de senha por segurança
-    console.warn('Não foi possível verificar config de senha:', e);
+    // Falha na API: mostra login por segurança (não pode liberar sem verificar)
+    mostrarModo('login');
+    console.warn('Erro ao verificar config de senha:', e);
   }
 }
 
+// Login com senha existente
 async function verificarSenha() {
-  const input = document.getElementById('senha-input');
-  const senha = input.value;
+  const input  = document.getElementById('senha-input');
   const erroEl = document.getElementById('senha-erro');
+  const senha  = input.value.trim();
+
+  erroEl.classList.add('hidden');
+  erroEl.textContent = '';
 
   if (!senha) {
-    erroEl.classList.remove('hidden');
     erroEl.textContent = '⚠️ Digite a senha para continuar.';
+    erroEl.classList.remove('hidden');
     return;
   }
+
+  // Feedback visual no botão
+  const btn = document.querySelector('#senha-modo-login .btn-primary');
+  const textoOriginal = btn.textContent;
+  btn.textContent = '⏳ Verificando...';
+  btn.disabled = true;
 
   try {
     const result = await apiGet({ action: 'verificarSenha', senha });
     if (result.liberado) {
       liberarPainel();
     } else {
-      erroEl.classList.remove('hidden');
       erroEl.textContent = '❌ Senha incorreta. Tente novamente.';
+      erroEl.classList.remove('hidden');
       input.value = '';
       input.focus();
+      btn.textContent = textoOriginal;
+      btn.disabled = false;
     }
   } catch (e) {
+    erroEl.textContent = '⚠️ Erro de conexão. Tente novamente.';
     erroEl.classList.remove('hidden');
-    erroEl.textContent = '⚠️ Erro de conexão. Verifique e tente novamente.';
+    btn.textContent = textoOriginal;
+    btn.disabled = false;
   }
 }
 
+// Primeiro acesso: definir senha e entrar
+async function configurarSenhaEEntrar() {
+  const nova      = document.getElementById('senha-nova').value.trim();
+  const confirma  = document.getElementById('senha-confirma').value.trim();
+  const erroEl    = document.getElementById('senha-setup-erro');
+
+  erroEl.classList.add('hidden');
+  erroEl.textContent = '';
+
+  if (!nova) {
+    erroEl.textContent = '⚠️ Digite uma senha.';
+    erroEl.classList.remove('hidden');
+    return;
+  }
+  if (nova.length < 4) {
+    erroEl.textContent = '⚠️ A senha deve ter pelo menos 4 caracteres.';
+    erroEl.classList.remove('hidden');
+    return;
+  }
+  if (nova !== confirma) {
+    erroEl.textContent = '❌ As senhas não coincidem.';
+    erroEl.classList.remove('hidden');
+    return;
+  }
+
+  const btn = document.querySelector('#senha-modo-setup .btn-primary');
+  btn.textContent = '⏳ Salvando...';
+  btn.disabled = true;
+
+  try {
+    const result = await apiPost({ action: 'saveConfig', key: 'painelSenha', value: nova });
+    if (result.success) {
+      liberarPainel();
+      // Avisa dentro do painel após carregar
+      setTimeout(() => showToast('✅ Senha definida com sucesso! Use-a no próximo acesso.', 'success'), 1200);
+    } else {
+      erroEl.textContent = '❌ Erro ao salvar senha. Tente novamente.';
+      erroEl.classList.remove('hidden');
+      btn.textContent = '✅ Definir senha e entrar';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    erroEl.textContent = '⚠️ Erro de conexão.';
+    erroEl.classList.remove('hidden');
+    btn.textContent = '✅ Definir senha e entrar';
+    btn.disabled = false;
+  }
+}
+
+// Primeiro acesso: entrar sem definir senha
+function entrarSemSenha() {
+  liberarPainel();
+  setTimeout(() => showToast('ℹ️ Painel sem senha. Configure uma em Configurações → Senha do Painel.', 'default'), 1200);
+}
+
+// Libera o painel (oculta o gate, carrega dados)
 function liberarPainel() {
   sessionStorage.setItem('cerest_auth', '1');
   document.getElementById('senha-gate').style.display = 'none';

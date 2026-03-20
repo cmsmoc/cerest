@@ -12,20 +12,52 @@
 </head>
 <body class="painel-body">
 
-  <!-- TELA DE SENHA -->
-  <div id="senha-gate" class="senha-gate">
-    <div class="senha-card">
+  <!-- TELA DE SENHA / PRIMEIRO ACESSO -->
+  <div id="senha-gate" class="senha-gate" style="display:none">
+
+    <!-- Modo: Login com senha já definida -->
+    <div class="senha-card" id="senha-modo-login" style="display:none">
       <img src="https://i.ibb.co/V059zm7p/cerest-texto-preto.png" alt="CEREST" class="senha-logo" />
+      <div class="senha-badge">🔒 Acesso Restrito</div>
       <h2>Painel Interno</h2>
       <p>Digite a senha para acessar o painel da equipe CEREST.</p>
       <div class="senha-field">
         <input type="password" id="senha-input" placeholder="Senha de acesso"
-               onkeydown="if(event.key==='Enter') verificarSenha()" autofocus />
+               onkeydown="if(event.key==='Enter') verificarSenha()" />
         <button class="btn-primary" onclick="verificarSenha()">Entrar →</button>
       </div>
-      <p class="senha-erro hidden" id="senha-erro">❌ Senha incorreta. Tente novamente.</p>
+      <p class="senha-erro hidden" id="senha-erro"></p>
       <small class="senha-hint">Em caso de dúvida, consulte o responsável técnico do sistema.</small>
     </div>
+
+    <!-- Modo: Configuração inicial (sem senha definida) -->
+    <div class="senha-card" id="senha-modo-setup" style="display:none">
+      <img src="https://i.ibb.co/V059zm7p/cerest-texto-preto.png" alt="CEREST" class="senha-logo" />
+      <div class="senha-badge setup">⚙️ Primeiro Acesso</div>
+      <h2>Configurar Acesso</h2>
+      <p>Nenhuma senha está definida. Você pode <strong>definir uma senha</strong> para proteger o painel ou <strong>entrar sem senha</strong>.</p>
+
+      <div class="senha-setup-box">
+        <label>Definir senha de acesso (opcional)</label>
+        <input type="password" id="senha-nova" placeholder="Digite uma senha (mín. 4 caracteres)" />
+        <input type="password" id="senha-confirma" placeholder="Confirme a senha" style="margin-top:8px" />
+        <p class="senha-erro hidden" id="senha-setup-erro"></p>
+      </div>
+
+      <div class="senha-setup-actions">
+        <button class="btn-primary" onclick="configurarSenhaEEntrar()">✅ Definir senha e entrar</button>
+        <button class="btn-secondary" onclick="entrarSemSenha()">Entrar sem senha →</button>
+      </div>
+      <small class="senha-hint">Você pode alterar ou remover a senha a qualquer momento nas Configurações do painel.</small>
+    </div>
+
+    <!-- Modo: Carregando -->
+    <div class="senha-card" id="senha-modo-loading">
+      <img src="https://i.ibb.co/V059zm7p/cerest-texto-preto.png" alt="CEREST" class="senha-logo" />
+      <div class="spinner" style="margin:24px auto 12px"></div>
+      <p style="color:var(--gray-600);font-size:14px;text-align:center">Verificando configurações...</p>
+    </div>
+
   </div>
 
   <!-- SIDEBAR -->

@@ -578,7 +578,7 @@
   inset: 0;
   background: var(--gray-100);
   z-index: 9999;
-  display: flex;
+  display: none; /* começa oculto – JS controla */
   align-items: center;
   justify-content: center;
   padding: 24px;
@@ -588,21 +588,40 @@
   background: white;
   border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-  padding: 48px 40px;
-  max-width: 420px;
+  padding: 40px 36px;
+  max-width: 440px;
   width: 100%;
   text-align: center;
   border-top: 4px solid var(--red);
 }
 
 .senha-logo {
-  height: 52px;
-  margin: 0 auto 24px;
+  height: 48px;
+  margin: 0 auto 20px;
   object-fit: contain;
 }
 
+.senha-badge {
+  display: inline-block;
+  background: var(--red-light);
+  color: var(--red-dark);
+  border: 1px solid #ef9a9a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+
+.senha-badge.setup {
+  background: #e3f2fd;
+  color: var(--blue);
+  border-color: #90caf9;
+}
+
 .senha-card h2 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--gray-900);
   margin-bottom: 8px;
@@ -611,13 +630,14 @@
 .senha-card > p {
   font-size: 14px;
   color: var(--gray-600);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  line-height: 1.5;
 }
 
 .senha-field {
   display: flex;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .senha-field input {
@@ -632,18 +652,65 @@
 }
 .senha-field input:focus { border-color: var(--red); }
 
+/* Setup box */
+.senha-setup-box {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.senha-setup-box label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.senha-setup-box input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: var(--transition);
+}
+.senha-setup-box input:focus { border-color: var(--red); }
+
+.senha-setup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.senha-setup-actions .btn-primary,
+.senha-setup-actions .btn-secondary {
+  width: 100%;
+  justify-content: center;
+}
+
 .senha-erro {
   color: var(--red);
   font-size: 13px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin: 6px 0 4px;
+  text-align: left;
 }
 
 .senha-hint {
   display: block;
   font-size: 12px;
   color: var(--gray-400);
-  margin-top: 16px;
+  margin-top: 14px;
+  line-height: 1.4;
 }
 
 /* ====== RESPONSIVE PAINEL ====== */
