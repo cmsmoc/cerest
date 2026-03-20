@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CEREST – Consultar Protocolo</title>
+  <link rel="icon" href="https://i.ibb.co/VWhxj5vw/Chat-GPT-Image-19-de-mar-de-2026-18-43-40.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/consulta.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html"><img src="https://i.ibb.co/VcNk4J6g/cerest-texto-branco.png" alt="CEREST" class="logo" /></a>
+      <nav class="header-nav">
+        <a href="index.html" class="btn-outline-light">+ Nova Solicitação</a>
+      </nav>
+    </div>
+    <div class="header-bar"></div>
+  </header>
+
+  <section class="hero hero-sm">
+    <div class="hero-content">
+      <span class="hero-badge">Acompanhamento</span>
+      <h1>Consultar <span class="accent">Protocolo</span></h1>
+      <p>Digite o número de protocolo recebido por e-mail para verificar o status da sua solicitação.</p>
+    </div>
+  </section>
+
+  <main class="consulta-container">
+    <div class="consulta-card">
+      <div class="search-area">
+        <label for="protocolo-input">Número do Protocolo</label>
+        <div class="search-row">
+          <input type="text" id="protocolo-input" placeholder="Ex: CAT-2026-0001" maxlength="20" />
+          <button class="btn-primary" onclick="buscarProtocolo()">Buscar</button>
+        </div>
+        <p class="search-hint">O protocolo foi enviado para o seu e-mail após o envio da solicitação.</p>
+      </div>
+
+      <div id="resultado" class="resultado hidden">
+        <!-- Preenchido via JS -->
+      </div>
+
+      <div id="not-found" class="not-found hidden">
+        <div class="nf-icon">🔍</div>
+        <h3>Protocolo não encontrado</h3>
+        <p>Verifique o número digitado ou entre em contato com o CEREST.</p>
+      </div>
+
+      <div id="loading-search" class="loading-search hidden">
+        <div class="spinner"></div>
+        <p>Buscando...</p>
+      </div>
+    </div>
+
+    <div class="status-guide">
+      <h3>Guia de Status</h3>
+      <div class="status-items">
+        <div class="status-item">
+          <span class="badge badge-pendente">PENDENTE</span>
+          <p>Solicitação recebida, aguardando análise da equipe CEREST.</p>
+        </div>
+        <div class="status-item">
+          <span class="badge badge-analisado">EM ANÁLISE</span>
+          <p>Sua solicitação está sendo analisada pela equipe técnica.</p>
+        </div>
+        <div class="status-item">
+          <span class="badge badge-agendado">AGENDADO</span>
+          <p>Atendimento agendado. Verifique a data informada.</p>
+        </div>
+        <div class="status-item">
+          <span class="badge badge-concluido">CONCLUÍDO</span>
+          <p>Atendimento realizado e encerrado.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <img src="https://i.ibb.co/VcNk4J6g/cerest-texto-branco.png" alt="CEREST" class="footer-logo" />
+      <div class="footer-info">
+        <p><strong>CEREST Montes Claros</strong> – Centro de Referência em Saúde do Trabalhador</p>
+        <p>Secretaria Municipal de Saúde | Montes Claros – MG</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/consulta.js"></script>
+</body>
+</html>
