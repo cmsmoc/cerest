@@ -64,6 +64,24 @@
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+/* Logo da Secretaria Executiva na sidebar */
+.sidebar-secexec {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+
+.sidebar-secexec img {
+  height: 30px;
+  object-fit: contain;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  max-width: 100%;
+}
+
+.sidebar-secexec img:hover { opacity: 0.9; }
+
 .user-info { display: flex; align-items: center; gap: 10px; }
 
 .user-avatar {

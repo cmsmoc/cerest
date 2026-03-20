@@ -65,6 +65,23 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
 }
 
+/* Agrupa logo da secretaria + nav do lado direito */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Logo da Secretaria Executiva no header (fundo vermelho) */
+.logo-secexec {
+  height: 36px;
+  object-fit: contain;
+  opacity: 0.92;
+  /* Separador visual sutil à esquerda */
+  border-left: 1px solid rgba(255,255,255,0.25);
+  padding-left: 20px;
+}
+
 .logo { height: 54px; object-fit: contain; }
 
 .header-bar {
@@ -337,6 +354,26 @@ img { max-width: 100%; display: block; }
 .footer-info p { font-size: 13px; line-height: 1.5; }
 .footer-copy { font-size: 12px; opacity: 0.5; margin-left: auto; }
 
+/* Logo da Secretaria Executiva no footer */
+.footer-secexec {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  border-left: 1px solid rgba(255,255,255,0.12);
+  padding-left: 24px;
+}
+
+.footer-secexec img {
+  height: 52px;
+  object-fit: contain;
+  /* Inverte para versão clara sobre fundo escuro */
+  filter: brightness(0) invert(1);
+  opacity: 0.65;
+  transition: opacity 0.2s;
+}
+
+.footer-secexec img:hover { opacity: 0.9; }
+
 /* ====== TOAST ====== */
 .toast {
   position: fixed;
@@ -381,6 +418,9 @@ img { max-width: 100%; display: block; }
 @media (max-width: 640px) {
   .hero-steps { flex-wrap: wrap; gap: 6px; }
   .step-arrow { display: none; }
-  .footer-inner { flex-direction: column; gap: 12px; }
+  .footer-inner { flex-direction: column; gap: 16px; align-items: flex-start; }
   .footer-copy { margin-left: 0; }
+  .footer-secexec { margin-left: 0; border-left: none; padding-left: 0; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 16px; width: 100%; }
+  /* Oculta logo da secretaria no header em telas muito pequenas */
+  .logo-secexec { display: none; }
 }
