@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CEREST – Painel Interno</title>
+  <link rel="icon" href="https://i.ibb.co/VWhxj5vw/Chat-GPT-Image-19-de-mar-de-2026-18-43-40.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/painel.css" />
+</head>
+<body class="painel-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://i.ibb.co/VcNk4J6g/cerest-texto-branco.png" alt="CEREST" />
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('solicitacoes')">
+        <span class="nav-icon">📋</span> Solicitações
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('agendamentos')">
+        <span class="nav-icon">📅</span> Agendamentos
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('configuracoes')">
+        <span class="nav-icon">⚙️</span> Configurações
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info" id="user-info">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-details">
+          <span id="user-name">Carregando...</span>
+          <small>Equipe CEREST</small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="painel-main">
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-actions">
+        <span class="alert-badge" id="alert-badge" style="display:none">
+          ⚠️ <span id="alert-count">0</span> pendentes há +3 dias
+        </span>
+        <button class="btn-refresh" onclick="loadData()">↻ Atualizar</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD SECTION -->
+    <section id="section-dashboard" class="painel-section">
+      <div class="stats-grid">
+        <div class="stat-card stat-pendente">
+          <div class="stat-num" id="count-pendente">0</div>
+          <div class="stat-label">Pendentes</div>
+        </div>
+        <div class="stat-card stat-analise">
+          <div class="stat-num" id="count-analise">0</div>
+          <div class="stat-label">Em Análise</div>
+        </div>
+        <div class="stat-card stat-agendado">
+          <div class="stat-num" id="count-agendado">0</div>
+          <div class="stat-label">Agendados</div>
+        </div>
+        <div class="stat-card stat-concluido">
+          <div class="stat-num" id="count-concluido">0</div>
+          <div class="stat-label">Concluídos</div>
+        </div>
+      </div>
+
+      <div class="dashboard-recent">
+        <div class="section-title">
+          <h3>Solicitações Recentes</h3>
+          <button class="btn-sm" onclick="showSection('solicitacoes')">Ver todas →</button>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table" id="recent-table">
+            <thead>
+              <tr>
+                <th>Protocolo</th>
+                <th>Nome</th>
+                <th>Agravo</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="recent-tbody">
+              <tr><td colspan="6" class="loading-cell">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLICITAÇÕES SECTION -->
+    <section id="section-solicitacoes" class="painel-section hidden">
+      <div class="filter-bar">
+        <input type="text" id="search-input" placeholder="🔍 Buscar por protocolo, nome ou CPF..." oninput="filterTable()" />
+        <select id="filter-status" onchange="filterTable()">
+          <option value="">Todos os status</option>
+          <option value="PENDENTE">Pendente</option>
+          <option value="EM ANÁLISE">Em Análise</option>
+          <option value="AGENDADO">Agendado</option>
+          <option value="CONCLUÍDO">Concluído</option>
+        </select>
+        <select id="filter-agravo" onchange="filterTable()">
+          <option value="">Todos os agravos</option>
+        </select>
+        <select id="filter-urgente" onchange="filterTable()">
+          <option value="">Urgência: Todos</option>
+          <option value="SIM">Somente Urgentes</option>
+        </select>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table" id="main-table">
+          <thead>
+            <tr>
+              <th>Protocolo</th>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>Agravo</th>
+              <th>Data Solic.</th>
+              <th>Urgente</th>
+              <th>Status</th>
+              <th>Agend.</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="main-tbody">
+            <tr><td colspan="9" class="loading-cell">Carregando dados...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </section>
+
+    <!-- AGENDAMENTOS SECTION -->
+    <section id="section-agendamentos" class="painel-section hidden">
+      <div class="section-title"><h3>Próximos Agendamentos</h3></div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Data Agendamento</th>
+              <th>Protocolo</th>
+              <th>Nome</th>
+              <th>Agravo</th>
+              <th>Contato</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="agend-tbody">
+            <tr><td colspan="6" class="loading-cell">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CONFIGURAÇÕES SECTION -->
+    <section id="section-configuracoes" class="painel-section hidden">
+      <h3>Configurações do Sistema</h3>
+      <div class="config-grid">
+        <div class="config-card">
+          <h4>📁 Pasta de Documentos</h4>
+          <p>Pasta do Google Drive onde os documentos gerados serão salvos.</p>
+          <input type="text" id="cfg-folder-id" placeholder="ID da pasta do Drive" />
+          <button class="btn-primary" onclick="saveConfig('folderId', document.getElementById('cfg-folder-id').value)">Salvar</button>
+        </div>
+        <div class="config-card">
+          <h4>📧 E-mail da Equipe CEREST</h4>
+          <p>Endereço que recebe as notificações de novas solicitações.</p>
+          <input type="text" id="cfg-email-cerest" placeholder="equipe@cerest.gov.br" />
+          <button class="btn-primary" onclick="saveConfig('emailCerest', document.getElementById('cfg-email-cerest').value)">Salvar</button>
+        </div>
+        <div class="config-card">
+          <h4>⚠️ Alerta de Pendentes</h4>
+          <p>Alertar quando solicitações ficarem pendentes por mais de X dias.</p>
+          <input type="number" id="cfg-alert-days" placeholder="3" min="1" max="30" />
+          <button class="btn-primary" onclick="saveConfig('alertDays', document.getElementById('cfg-alert-days').value)">Salvar</button>
+        </div>
+        <div class="config-card">
+          <h4>🔧 Setup Inicial</h4>
+          <p>Configura a planilha Google Sheets automaticamente (abas, cabeçalhos, dados iniciais).</p>
+          <button class="btn-danger" onclick="runSetup()">⚙️ Executar Setup</button>
+          <small>Execute apenas uma vez na configuração inicial.</small>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL EDIÇÃO -->
+  <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-title">Detalhes da Solicitação</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Preenchido via JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Fechar</button>
+        <button class="btn-primary" onclick="saveModalData()">💾 Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/painel.js"></script>
+</body>
+</html>
